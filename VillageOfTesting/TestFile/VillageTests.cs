@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using VillageOfTesting;
 using VillageOfTesting.Objects;
 using Xunit;
+using VillageOfTesting.OccupationActions;
 
 namespace VillageOfTesting.Tests
 {
@@ -14,10 +15,11 @@ namespace VillageOfTesting.Tests
     {
         private Village village;
 
-        public VillageTests()
+        public VillageTests() 
         {
             village = new Village();
         }
+
 
         [Fact]
         public void Village_AddWorker_ShouldAddWorkerToTheList()
@@ -126,5 +128,55 @@ namespace VillageOfTesting.Tests
             Assert.All(village.Workers, worker => Assert.False(worker.Alive));
             Assert.True(village.GameOver);
         }
+
+        [Fact]
+        public void AddProject_SuccessfullyAddsProject()
+        {
+            // Arrange
+            int initialWood = village.Wood;
+            int initialMetal = village.Metal;
+            string projectName = "House";
+
+            // Act
+            village.AddProject(projectName);
+
+            // Assert
+            Assert.True(village.Projects.Count > 0);
+            Assert.True(village.Wood < initialWood);
+            Assert.True(village.Metal < initialMetal);
+        }
+        [Fact]
+        public void AddProject_InsufficientResources()
+        {
+            // Arrange
+            int initialWood = village.Wood;
+            int initialMetal = village.Metal;
+            string projectName = "Castle";
+
+            // Act
+            village.AddProject(projectName);
+
+            // Assert
+            Assert.True(village.Projects.Count == 0);
+            Assert.Equal(initialWood,   village.Wood);
+            Assert.Equal(initialMetal, village.Metal);
+        }
+
+        [Fact]
+        public void AddProject_CompleteProjectAffectsResourceProduction()
+        {
+            // Arrange
+            string projectName = "Woodmill";
+            int initialWoodPerDay = village.WoodPerDay;
+
+            // Act
+            village.AddProject(projectName);
+            
+            village.Projects[0].Complete();
+
+            // Assert
+            Assert.Equal(initialWoodPerDay + 1, village.WoodPerDay);
+        }
+
     }
 }
