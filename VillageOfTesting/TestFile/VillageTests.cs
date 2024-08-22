@@ -20,6 +20,48 @@ namespace VillageOfTesting.Tests
             village = new Village();
         }
 
+        [Fact]
+        public void AddWorker_ShouldAddWorker_WhenOccupationExist()
+        {
+            //Arrange
+            village = new Village();
+
+            //Act
+            village.AddWorker("john", "farmer");
+
+            //Assert
+            Assert.Single(village.Workers);
+            Assert.Equal("john", village.Workers[0].Name);
+            Assert.Equal("farmer", village.Workers[0].Occupation);
+        }
+
+        [Fact]
+        public void AddWorker_ShouldNotAddWorker_WhenOccupationDoesNotExist()
+        {
+            // Arrange
+            var village = new Village();
+
+            // Act
+            village.AddWorker("Doe", "wizard");
+
+            // Assert
+            Assert.Empty(village.Workers); // Kontrollera att inga arbetare har lagts till
+        }
+
+        [Fact]
+        public void AddWorker_ShouldNotAddWorker_WhenMaxWorkersReached()
+        {
+            // Arrange
+            var village = new Village { MaxWorkers = 1 };
+            village.AddWorker("Worker1", "farmer");
+
+            // Act
+            village.AddWorker("Worker2", "farmer");
+
+            // Assert
+            Assert.Single(village.Workers); // Kontrollera att bara en arbetare har lagts till
+            Assert.Equal("Worker1", village.Workers[0].Name); // Kontrollera att det är rätt arbetare som lagts till
+        }
 
         [Fact]
         public void Village_AddWorker_ShouldAddWorkerToTheList()
